@@ -1,0 +1,9 @@
+{
+	"name": "adf-bwt-developer18",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1e0ca89d-1ddf-49d7-9a66-beedde44d940",
+		"tenantId": "2a6cf267-56b2-46a1-8caf-48fae4fdf3aa"
+	}
+}
