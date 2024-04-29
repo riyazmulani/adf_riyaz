@@ -1,0 +1,68 @@
+{
+	"name": "PL_INGESTION_Driver",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_drivers_data",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SOURCE_SEASONS_DATA1",
+						"type": "DatasetReference",
+						"parameters": {
+							"relative_url": {
+								"value": "drivers.json?limit=1000",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SEASONS_SINK_DATA2",
+						"type": "DatasetReference",
+						"parameters": {
+							"dir_name": {
+								"value": "@concat('/bronze/drivers/',string(utcnow('yyyyMMdd')))",
+								"type": "Expression"
+							},
+							"file_name": "drivers"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

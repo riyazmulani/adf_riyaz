@@ -1,0 +1,205 @@
+{
+	"name": "PL_CHILDPIPELINE_RACE_RESULT1",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach Activity for Iterating Round",
+				"description": "This Activity is used to Iterate Round in Race Result",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Race",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_race_result').output.value[0].MRData.RaceTable.Races",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set variable_activity_for_year",
+							"description": "This Activity is used to set Season Year",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "season_year",
+								"value": {
+									"value": "@item().season",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set variable_activity_for_round",
+							"description": "This Activity is Used to Set Round ID",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "round_id",
+								"value": {
+									"value": "@item().round",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Copy data_Result",
+							"description": "This Activity will Copy Result data from API to ADLS Gen 2",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set variable_activity_for_round",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set variable_activity_for_year",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_RESULTS_SOURCE_DATA1",
+									"type": "DatasetReference",
+									"parameters": {
+										"season": {
+											"value": "@variables('season_year')",
+											"type": "Expression"
+										},
+										"round": {
+											"value": "@variables('round_id')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SEASONS_SINK_DATA1",
+									"type": "DatasetReference",
+									"parameters": {
+										"dir_name": {
+											"value": "@concat('/bronze/result/',string(utcnow('yyyyMMdd')))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat(variables('season_year'),'_',variables('round_id'),'.json')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Lookup_Race",
+				"description": "This Look up Activity reads data from Race",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_SEASONS_SINK_DATA1",
+						"type": "DatasetReference",
+						"parameters": {
+							"dir_name": {
+								"value": "@concat('/bronze/races/',string(utcNow('yyyyMMdd')))",
+								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@concat(pipeline().parameters.season_year,'_race')",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"season_year": {
+				"type": "string",
+				"defaultValue": "1950"
+			}
+		},
+		"variables": {
+			"season_year": {
+				"type": "String"
+			},
+			"round_id": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

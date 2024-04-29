@@ -1,0 +1,224 @@
+{
+	"name": "PL_INGESTION_SEASONS_DATA_USING_REST_API",
+	"properties": {
+		"activities": [
+			{
+				"name": "COPY_SEASONS_DATA",
+				"description": "This Copy data Activity is used to copy data from API to ADLS Gen 2",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SOURCE_SEASONS_DATA",
+						"type": "DatasetReference",
+						"parameters": {
+							"relative_url": "seasons.json?limit=100"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SEASONS_SINK_DATA",
+						"type": "DatasetReference",
+						"parameters": {
+							"dir_name": {
+								"value": "@concat('/bronze/seasons/',string(utcnow('yyyyMMdd')))",
+								"type": "Expression"
+							},
+							"file_name": "seasons.json"
+						}
+					}
+				]
+			},
+			{
+				"name": "Lookup_activity_Seasons",
+				"description": "This look up activity reads data from Seasons file",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "COPY_SEASONS_DATA",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_SEASONS_SINK_DATA",
+						"type": "DatasetReference",
+						"parameters": {
+							"dir_name": {
+								"value": "@concat('/bronze/seasons/',string(utcnow('yyyyMMdd')))",
+								"type": "Expression"
+							},
+							"file_name": "seasons.json"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach_activity_seasons_data",
+				"description": "This ForEach activity is used to iterate on Seasons data yearwise",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_activity_Seasons",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_activity_Seasons').output.value[0].MRData.SeasonTable.Seasons",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Copy data_Race",
+							"description": "This Copy Activity is used to Copy Race data from API to ADLS Gen 2",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SOURCE_SEASONS_DATA",
+									"type": "DatasetReference",
+									"parameters": {
+										"relative_url": {
+											"value": "@concat(item().season,'.json?limit=100')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SEASONS_SINK_DATA",
+									"type": "DatasetReference",
+									"parameters": {
+										"dir_name": "@concat('/bronze/races/',string(utcnow('yyyyMMdd')))",
+										"file_name": {
+											"value": "@concat(item().season,'_race')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Execute_Pipeline_result",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Copy data_Race",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"waitOnCompletion": true
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"season_year": {
+				"type": "String"
+			},
+			"round_id": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
