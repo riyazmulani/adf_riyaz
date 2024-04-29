@@ -1,0 +1,29 @@
+{
+	"name": "DS_RESULTS_SOURCE_DATA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_source_season",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"season": {
+				"type": "string"
+			},
+			"round": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@concat(dataset().season,'/',dataset().round,'/results.json')",
+					"type": "Expression"
+				}
+			}
+		},
+		"schema": {}
+	}
+}
