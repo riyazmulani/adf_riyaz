@@ -1,0 +1,9 @@
+{
+	"name": "Covid-Reporting-riyazDF",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "41e3f690-7822-4fac-b562-c589f9fe9806",
+		"tenantId": "c52a15ac-356e-4bb4-a7b3-92e605d35615"
+	}
+}
