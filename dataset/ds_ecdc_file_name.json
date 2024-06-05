@@ -1,0 +1,29 @@
+{
+	"name": "ds_ecdc_file_name",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_covidreprtnrml",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ecdc-file-list-for-2-files.json",
+				"container": "configs"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"sourceRelativeURL": {
+					"type": "string"
+				},
+				"sinkFileName": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
