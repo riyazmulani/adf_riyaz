@@ -1,0 +1,15 @@
+{
+	"name": "ls_sql_covid_db",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "covid-srvrz.database.windows.net",
+			"database": "covid-db",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"hostNameInCertificate": "",
+			"authenticationType": "SystemAssignedManagedIdentity"
+		}
+	}
+}
