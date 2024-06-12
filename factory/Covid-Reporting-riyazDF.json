@@ -2,7 +2,7 @@
 	"name": "Covid-Reporting-riyazDF",
 	"properties": {
 		"globalConfigurations": {
-			"PolicyValidationEnabled": "true"
+			"PolicyValidationEnabled": "false"
 		}
 	},
 	"location": "centralindia",
