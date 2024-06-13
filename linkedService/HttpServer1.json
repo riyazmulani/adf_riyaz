@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "HttpServer",
 		"typeProperties": {
-			"url": "https://github.com/cloudboxacademy",
+			"url": "https://github.com/cloudboxacademy/",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		}
