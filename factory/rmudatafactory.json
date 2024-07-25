@@ -1,0 +1,9 @@
+{
+	"name": "rmudatafactory",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0bafa8b1-d35a-410e-afcd-c46f4f53b6f5",
+		"tenantId": "d8bf5cde-2ec8-4cba-b669-e366d7a9189c"
+	}
+}
