@@ -1,14 +1,9 @@
 {
-	"name": "DelimitedText19",
+	"name": "DelimitedText21",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "blobserevice_rmstorage",
 			"type": "LinkedServiceReference"
-		},
-		"parameters": {
-			"file": {
-				"type": "string"
-			}
 		},
 		"annotations": [],
 		"type": "DelimitedText",
