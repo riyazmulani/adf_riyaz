@@ -1,0 +1,58 @@
+{
+	"name": "dataflow_csvtojson",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText33",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SOld as integer,",
+				"          SODate as string,",
+				"          Country as string,",
+				"          Item as integer,",
+				"          Qty as integer,",
+				"          Value as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(Sales = @(Item_id=Item,",
+				"          Qty=Qty,",
+				"          Value=Value)) ~> derivedColumn1",
+				"derivedColumn1 aggregate(groupBy(SOld,",
+				"          SODate,",
+				"          Country),",
+				"     Sales = collect(Sales)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
