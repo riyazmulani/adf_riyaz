@@ -1,0 +1,68 @@
+{
+	"name": "dataflow_jsontocsv",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Json2",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText34",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SOld as integer,",
+				"          SODate as string,",
+				"          Country as string,",
+				"          Sales as (Item_id as integer, Qty as integer, Value as integer)[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments',",
+				"     partitionBy('roundRobin', 2)) ~> source1",
+				"source1 foldDown(unroll(Sales, Sales),",
+				"     mapColumn(",
+				"          SOld,",
+				"          SODate,",
+				"          Country,",
+				"          Item = Sales.Item_id,",
+				"          Qty = Sales.Qty,",
+				"          Value = Sales.Value",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SOld as string,",
+				"          SODate as string,",
+				"          Country as string,",
+				"          Item as string,",
+				"          Qty as string,",
+				"          Value as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,47 @@
+{
+	"name": "DelimitedText34",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobserevice_rmstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "new"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "SOld",
+				"type": "String"
+			},
+			{
+				"name": "SODate",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			},
+			{
+				"name": "Item",
+				"type": "String"
+			},
+			{
+				"name": "Qty",
+				"type": "String"
+			},
+			{
+				"name": "Value",
+				"type": "String"
+			}
+		]
+	}
+}

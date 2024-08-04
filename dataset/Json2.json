@@ -1,0 +1,49 @@
+{
+	"name": "Json2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobserevice_rmstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "part-00000-f4ad0f75-d635-465a-8625-c7a3c832c6fd-c000.json",
+				"container": "new"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"SOld": {
+					"type": "integer"
+				},
+				"SODate": {
+					"type": "string"
+				},
+				"Country": {
+					"type": "string"
+				},
+				"Sales": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"Item_id": {
+								"type": "integer"
+							},
+							"Qty": {
+								"type": "integer"
+							},
+							"Value": {
+								"type": "integer"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
