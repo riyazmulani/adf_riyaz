@@ -1,0 +1,45 @@
+{
+	"name": "dataflow_multiline_to single line",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText41",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Vartid as string,",
+				"          ItemName as string,",
+				"          VartName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(VartName = split(VartName,',')) ~> derivedColumn1",
+				"derivedColumn1 foldDown(unroll(VartName, VartName),",
+				"     mapColumn(",
+				"          Vartid,",
+				"          ItemName,",
+				"          VartName",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1"
+			]
+		}
+	}
+}
