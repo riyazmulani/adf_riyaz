@@ -1,0 +1,50 @@
+{
+	"name": "Excel1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobserevice_rmstorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sheetname": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": {
+				"value": "@dataset().sheetname",
+				"type": "Expression"
+			},
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "employees_with_country.xlsx",
+				"container": "empexcel"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Id",
+				"type": "String"
+			},
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "DOB",
+				"type": "String"
+			},
+			{
+				"name": "Salary",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			}
+		]
+	}
+}
