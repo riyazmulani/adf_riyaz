@@ -1,0 +1,9 @@
+{
+	"name": "rmdf1",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "61443fe7-e316-4b04-a9ca-da47989353de",
+		"tenantId": "d8a2a820-b265-44e6-97f5-5e0cfac0e2bc"
+	}
+}
