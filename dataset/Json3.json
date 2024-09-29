@@ -1,0 +1,38 @@
+{
+	"name": "Json3",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adls_link",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "customer_data.json",
+				"fileSystem": "emp"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"CustId": {
+					"type": "integer"
+				},
+				"FirstName": {
+					"type": "string"
+				},
+				"LastName": {
+					"type": "string"
+				},
+				"City": {
+					"type": "string"
+				},
+				"EnrollDT": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,43 @@
+{
+	"name": "json_sort",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Json3",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustId as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          City as string,",
+				"          EnrollDT as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> source1",
+				"source1 sort(asc(CustId, true),",
+				"     desc(EnrollDT, true)) ~> sort1",
+				"sort1 aggregate(groupBy(CustId),",
+				"     each(match(name!=\"CustId\"), $$ = first($$))) ~> aggregate1"
+			]
+		}
+	}
+}
